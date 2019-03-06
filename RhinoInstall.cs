@@ -1,16 +1,16 @@
-﻿using Microsoft.Win32;
-using System;
+﻿using System;
 using System.IO;
+using Microsoft.Win32;
 
 namespace RunCleanRhino
 {
   /// <summary>
-  /// Class to track Rhino installs, used in form's combo box.
+  ///   Class to track Rhino installs, used in form's combo box.
   /// </summary>
   internal class RhinoInstall
   {
     /// <summary>
-    /// Public constructor
+    ///   Public constructor
     /// </summary>
     public RhinoInstall()
     {
@@ -29,7 +29,7 @@ namespace RunCleanRhino
 
     public bool IsValid()
     {
-      bool rc = !string.IsNullOrEmpty(Title);
+      var rc = !string.IsNullOrEmpty(Title);
       if (rc)
         rc = !string.IsNullOrEmpty(RegSubKey);
       if (rc)
@@ -45,27 +45,28 @@ namespace RunCleanRhino
     }
 
     /// <summary>
-    /// Cleans up an installation scheme
+    ///   Cleans up an installation scheme
     /// </summary>
     public virtual void Clean()
     {
       const string scheme = "Scheme: Clean";
 
-      string keyName = RegSubKey + "\\" + scheme;
-      bool bScheme = false;
+      var keyName = RegSubKey + "\\" + scheme;
+      var bScheme = false;
 
       // Look for a scheme named "Clean"
       try
       {
-        RegistryKey baseKey = RegistryKey.OpenBaseKey(RegistryHive.CurrentUser, RegistryView.Default);
+        var baseKey = RegistryKey.OpenBaseKey(RegistryHive.CurrentUser, RegistryView.Default);
         if (null != baseKey)
         {
-          RegistryKey key = baseKey.OpenSubKey(keyName);
+          var key = baseKey.OpenSubKey(keyName);
           if (null != key)
           {
             bScheme = true;
             key.Close();
           }
+
           baseKey.Close();
         }
       }
@@ -75,47 +76,48 @@ namespace RunCleanRhino
 
       // If found, delete the scheme named "Clean"
       if (bScheme)
-      {
         try
         {
-          RegistryKey baseKey = RegistryKey.OpenBaseKey(RegistryHive.CurrentUser, RegistryView.Default);
+          var baseKey = RegistryKey.OpenBaseKey(RegistryHive.CurrentUser, RegistryView.Default);
           if (null != baseKey)
           {
-            RegistryKey key = baseKey.OpenSubKey(RegSubKey, true);
+            var key = baseKey.OpenSubKey(RegSubKey, true);
             if (null != key)
             {
               key.DeleteSubKeyTree(scheme, false);
               key.Close();
             }
+
             baseKey.Close();
           }
         }
         catch
         {
         }
-      }
     }
 
     /// <summary>
-    /// Finds a Rhino installation
+    ///   Finds a Rhino installation
     /// </summary>
     public virtual bool Find()
     {
-      string keyName = RegSubKey + "\\Install";
+      var keyName = RegSubKey + "\\Install";
       const string valueName = "Path";
       string value = null;
 
       try
       {
-        RegistryKey baseKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, Is64Bit ? RegistryView.Registry64 : RegistryView.Registry32);
+        var baseKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine,
+          Is64Bit ? RegistryView.Registry64 : RegistryView.Registry32);
         if (null != baseKey)
         {
-          RegistryKey key = baseKey.OpenSubKey(keyName);
+          var key = baseKey.OpenSubKey(keyName);
           if (null != key)
           {
-            value = (string)key.GetValue(valueName);
+            value = (string) key.GetValue(valueName);
             key.Close();
           }
+
           baseKey.Close();
         }
       }
@@ -126,18 +128,18 @@ namespace RunCleanRhino
       if (string.IsNullOrEmpty(value))
         return false;
 
-      string filePath = value + ExeFile;
+      var filePath = value + ExeFile;
       if (!File.Exists(filePath))
         return false;
 
       ExePath = filePath;
-      
+
       return true;
     }
   }
 
   /// <summary>
-  /// Rhino 4.0 install
+  ///   Rhino 4.0 install
   /// </summary>
   internal class Rhino4Install : RhinoInstall
   {
@@ -149,26 +151,27 @@ namespace RunCleanRhino
       Is64Bit = false;
     }
 
-   /// <summary>
-    /// Finds a Rhino installation
+    /// <summary>
+    ///   Finds a Rhino installation
     /// </summary>
     public override bool Find()
     {
-      string keyName = RegSubKey;
-      string valueName = "MostRecent";
+      var keyName = RegSubKey;
+      var valueName = "MostRecent";
       string value = null;
 
       try
       {
-        RegistryKey baseKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32);
+        var baseKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32);
         if (null != baseKey)
         {
-          RegistryKey key = baseKey.OpenSubKey(keyName);
+          var key = baseKey.OpenSubKey(keyName);
           if (null != key)
           {
-            value = (string)key.GetValue(valueName);
+            value = (string) key.GetValue(valueName);
             key.Close();
           }
+
           baseKey.Close();
         }
       }
@@ -185,15 +188,16 @@ namespace RunCleanRhino
 
       try
       {
-        RegistryKey baseKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32);
+        var baseKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32);
         if (null != baseKey)
         {
-          RegistryKey key = baseKey.OpenSubKey(keyName);
+          var key = baseKey.OpenSubKey(keyName);
           if (null != key)
           {
-            value = (string)key.GetValue(valueName);
+            value = (string) key.GetValue(valueName);
             key.Close();
           }
+
           baseKey.Close();
         }
       }
@@ -204,7 +208,7 @@ namespace RunCleanRhino
       if (string.IsNullOrEmpty(value))
         return false;
 
-      string filePath = value + ExeFile;
+      var filePath = value + ExeFile;
       if (!File.Exists(filePath))
         return false;
 
@@ -215,7 +219,7 @@ namespace RunCleanRhino
   }
 
   /// <summary>
-  /// Rhino 5 32-bit install
+  ///   Rhino 5 32-bit install
   /// </summary>
   internal class Rhino5Install : RhinoInstall
   {
@@ -229,7 +233,7 @@ namespace RunCleanRhino
   }
 
   /// <summary>
-  /// Rhino 5 64-bit install
+  ///   Rhino 5 64-bit install
   /// </summary>
   internal class Rhino5x64Install : RhinoInstall
   {
@@ -243,7 +247,7 @@ namespace RunCleanRhino
   }
 
   /// <summary>
-  /// Rhino 6 install
+  ///   Rhino 6 install
   /// </summary>
   internal class Rhino6Install : RhinoInstall
   {
@@ -259,14 +263,13 @@ namespace RunCleanRhino
     {
       base.Clean();
 
-      string path = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+      var path = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
       path += "\\McNeel\\Rhinoceros\\6.0\\settings";
 
       if (Directory.Exists(path))
-      {
         try
         {
-          string filename = path + "\\settings-Scheme__Clean.xml";
+          var filename = path + "\\settings-Scheme__Clean.xml";
           File.Delete(filename);
 
           filename = path + "\\window_positions-Scheme__Clean.xml";
@@ -274,9 +277,44 @@ namespace RunCleanRhino
         }
         catch (Exception)
         {
+          // ignored
         }
-      }
     }
   }
 
+  /// <summary>
+  ///   Rhino 7 install
+  /// </summary>
+  internal class Rhino7Install : RhinoInstall
+  {
+    public Rhino7Install()
+    {
+      Title = "Rhinoceros 7";
+      RegSubKey = "Software\\McNeel\\Rhinoceros\\7.0";
+      ExeFile = "Rhino.exe";
+      Is64Bit = true;
+    }
+
+    public override void Clean()
+    {
+      base.Clean();
+
+      var path = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+      path += "\\McNeel\\Rhinoceros\\7.0\\settings";
+
+      if (Directory.Exists(path))
+        try
+        {
+          var filename = path + "\\settings-Scheme__Clean.xml";
+          File.Delete(filename);
+
+          filename = path + "\\window_positions-Scheme__Clean.xml";
+          File.Delete(filename);
+        }
+        catch (Exception)
+        {
+          // ignored
+        }
+    }
+  }
 }

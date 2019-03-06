@@ -1,18 +1,17 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
 
 namespace RunCleanRhino
 {
   /// <summary>
-  /// Main application form
+  ///   Main application form
   /// </summary>
   public partial class MainForm : Form
   {
     /// <summary>
-    /// Public constructor
+    ///   Public constructor
     /// </summary>
     public MainForm()
     {
@@ -20,27 +19,27 @@ namespace RunCleanRhino
     }
 
     /// <summary>
-    /// MainForm is about to load
+    ///   MainForm is about to load
     /// </summary>
     private void MainForm_Load(object sender, EventArgs e)
     {
-      for (int i = 0; i < 4; i++)
+      for (var i = 0; i < 5; i++)
       {
         RhinoInstall install = null;
         if (i == 0)
-          install = new Rhino6Install();
+          install = new Rhino7Install();
         else if (i == 1)
-          install = new Rhino5x64Install();
+          install = new Rhino6Install();
         else if (i == 2)
-          install  = new Rhino5Install();
+          install = new Rhino5x64Install();
         else if (i == 3)
+          install = new Rhino5Install();
+        else if (i == 4)
           install = new Rhino4Install();
 
         if (null != install)
-        {
           if (install.Find() && install.IsValid())
             comboInstalls.Items.Add(install);
-        }
       }
 
       if (comboInstalls.Items.Count > 0)
@@ -49,23 +48,24 @@ namespace RunCleanRhino
       }
       else
       {
-        MessageBox.Show(this, "No Rhino installations found!", this.Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
-        this.Close();
+        MessageBox.Show(this, "No Rhino installations found!", Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
+        Close();
       }
 
-      this.CenterToScreen();
+      CenterToScreen();
     }
 
     /// <summary>
-    /// The "Run" button was clicked
+    ///   The "Run" button was clicked
     /// </summary>
     private void buttonRun_Click(object sender, EventArgs e)
     {
-      RhinoInstall install = (RhinoInstall)comboInstalls.SelectedItem;
+      var install = (RhinoInstall) comboInstalls.SelectedItem;
       if (null == install)
       {
         // Should never get here...
-        MessageBox.Show(this, "Please select a Rhino from the drop-down list.", this.Text, MessageBoxButtons.OK, MessageBoxIcon.Information);
+        MessageBox.Show(this, "Please select a Rhino from the drop-down list.", Text, MessageBoxButtons.OK,
+          MessageBoxIcon.Information);
         comboInstalls.Focus();
         return;
       }
@@ -76,27 +76,29 @@ namespace RunCleanRhino
       // Run Rhino
       try
       {
-        ProcessStartInfo startInfo = new ProcessStartInfo();
-        startInfo.FileName = install.ExePath;
-        startInfo.Arguments = "/Scheme=Clean";
-        startInfo.WorkingDirectory = Path.GetDirectoryName(install.ExePath);
-        Process.Start(startInfo);
+        var start_info = new ProcessStartInfo
+        {
+          FileName = install.ExePath,
+          Arguments = "/Scheme=Clean",
+          WorkingDirectory = Path.GetDirectoryName(install.ExePath)
+        };
+        Process.Start(start_info);
       }
       catch
       {
-        string msg = string.Format("Unable to run {0}!", install.Title);
-        MessageBox.Show(this, msg, this.Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
+        var msg = $"Unable to run {install.Title}!";
+        MessageBox.Show(this, msg, Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
       }
 
-      this.Close();
+      Close();
     }
 
     /// <summary>
-    /// The "Cancel" button was clicked
+    ///   The "Cancel" button was clicked
     /// </summary>
     private void buttonCancel_Click(object sender, EventArgs e)
     {
-      this.Close();
+      Close();
     }
   }
 }
