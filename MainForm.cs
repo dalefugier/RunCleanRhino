@@ -23,18 +23,20 @@ namespace RunCleanRhino
     /// </summary>
     private void MainForm_Load(object sender, EventArgs e)
     {
-      for (var i = 0; i < 5; i++)
+      for (var i = 0; i < 6; i++)
       {
         RhinoInstall install = null;
         if (i == 0)
-          install = new Rhino7Install();
+          install = new Rhino8Install();
         else if (i == 1)
-          install = new Rhino6Install();
+          install = new Rhino7Install();
         else if (i == 2)
-          install = new Rhino5x64Install();
+          install = new Rhino6Install();
         else if (i == 3)
-          install = new Rhino5Install();
+          install = new Rhino5x64Install();
         else if (i == 4)
+          install = new Rhino5Install();
+        else if (i == 5)
           install = new Rhino4Install();
 
         if (null != install)

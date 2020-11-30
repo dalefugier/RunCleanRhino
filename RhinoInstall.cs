@@ -5,12 +5,12 @@ using Microsoft.Win32;
 namespace RunCleanRhino
 {
   /// <summary>
-  ///   Class to track Rhino installs, used in form's combo box.
+  /// Class to track Rhino installs, used in form's combo box.
   /// </summary>
-  internal class RhinoInstall
+  internal abstract class RhinoInstall
   {
     /// <summary>
-    ///   Public constructor
+    /// Public constructor
     /// </summary>
     public RhinoInstall()
     {
@@ -45,7 +45,7 @@ namespace RunCleanRhino
     }
 
     /// <summary>
-    ///   Cleans up an installation scheme
+    /// Cleans up an installation scheme
     /// </summary>
     public virtual void Clean()
     {
@@ -97,7 +97,7 @@ namespace RunCleanRhino
     }
 
     /// <summary>
-    ///   Finds a Rhino installation
+    /// Finds a Rhino installation
     /// </summary>
     public virtual bool Find()
     {
@@ -139,20 +139,20 @@ namespace RunCleanRhino
   }
 
   /// <summary>
-  ///   Rhino 4.0 install
+  /// Rhino 4.0 install
   /// </summary>
   internal class Rhino4Install : RhinoInstall
   {
     public Rhino4Install()
     {
-      Title = "Rhinoceros 4.0";
+      Title = "Rhino 4.0";
       RegSubKey = "Software\\McNeel\\Rhinoceros\\4.0";
       ExeFile = "Rhino4.exe";
       Is64Bit = false;
     }
 
     /// <summary>
-    ///   Finds a Rhino installation
+    /// Finds a Rhino installation
     /// </summary>
     public override bool Find()
     {
@@ -219,13 +219,13 @@ namespace RunCleanRhino
   }
 
   /// <summary>
-  ///   Rhino 5 32-bit install
+  /// Rhino 5 32-bit install
   /// </summary>
   internal class Rhino5Install : RhinoInstall
   {
     public Rhino5Install()
     {
-      Title = "Rhinoceros 5 (32-bit)";
+      Title = "Rhino 5 (32-bit)";
       RegSubKey = "Software\\McNeel\\Rhinoceros\\5.0";
       ExeFile = "Rhino4.exe";
       Is64Bit = false;
@@ -233,13 +233,13 @@ namespace RunCleanRhino
   }
 
   /// <summary>
-  ///   Rhino 5 64-bit install
+  /// Rhino 5 64-bit install
   /// </summary>
   internal class Rhino5x64Install : RhinoInstall
   {
     public Rhino5x64Install()
     {
-      Title = "Rhinoceros 5 (64-bit)";
+      Title = "Rhino 5 (64-bit)";
       RegSubKey = "Software\\McNeel\\Rhinoceros\\5.0x64";
       ExeFile = "Rhino.exe";
       Is64Bit = true;
@@ -247,13 +247,13 @@ namespace RunCleanRhino
   }
 
   /// <summary>
-  ///   Rhino 6 install
+  /// Rhino 6 install
   /// </summary>
   internal class Rhino6Install : RhinoInstall
   {
     public Rhino6Install()
     {
-      Title = "Rhinoceros 6";
+      Title = "Rhino 6";
       RegSubKey = "Software\\McNeel\\Rhinoceros\\6.0";
       ExeFile = "Rhino.exe";
       Is64Bit = true;
@@ -283,13 +283,13 @@ namespace RunCleanRhino
   }
 
   /// <summary>
-  ///   Rhino 7 install
+  /// Rhino 7 install
   /// </summary>
   internal class Rhino7Install : RhinoInstall
   {
     public Rhino7Install()
     {
-      Title = "Rhinoceros 7";
+      Title = "Rhino 7";
       RegSubKey = "Software\\McNeel\\Rhinoceros\\7.0";
       ExeFile = "Rhino.exe";
       Is64Bit = true;
@@ -317,4 +317,41 @@ namespace RunCleanRhino
         }
     }
   }
+
+  /// <summary>
+  /// Rhino 8 install
+  /// </summary>
+  internal class Rhino8Install : RhinoInstall
+  {
+    public Rhino8Install()
+    {
+      Title = "Rhino 8";
+      RegSubKey = "Software\\McNeel\\Rhinoceros\\8.0";
+      ExeFile = "Rhino.exe";
+      Is64Bit = true;
+    }
+
+    public override void Clean()
+    {
+      base.Clean();
+
+      var path = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+      path += "\\McNeel\\Rhinoceros\\8.0\\settings";
+
+      if (Directory.Exists(path))
+        try
+        {
+          var filename = path + "\\settings-Scheme__Clean.xml";
+          File.Delete(filename);
+
+          filename = path + "\\window_positions-Scheme__Clean.xml";
+          File.Delete(filename);
+        }
+        catch (Exception)
+        {
+          // ignored
+        }
+    }
+  }
+
 }
