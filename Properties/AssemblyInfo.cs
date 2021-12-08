@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Robert McNeel & Associates")]
 [assembly: AssemblyProduct("RunCleanRhino")]
-[assembly: AssemblyCopyright("Copyright © 2014-2020, Robert McNeel & Associates")]
+[assembly: AssemblyCopyright("Copyright © 2014-2021, Robert McNeel & Associates")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 [assembly: ComVisible(false)]
